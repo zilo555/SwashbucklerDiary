@@ -17,7 +17,6 @@ env:
   CSPROJ_FILE_PATH: 'src/SwashbucklerDiary.Maui/SwashbucklerDiary.Maui.csproj'
   APP_NAME: 'SwashbucklerDiary'
   STORE_ID: '9P6PBVBF466L'
-  APPBUNDLENAME: 'Swashbuckler Diary'
 
 jobs:
   WindowsAndAndroid:
@@ -46,8 +45,6 @@ jobs:
         run: |
           dotnet workload install android --ignore-failed-sources
           dotnet workload install maui --ignore-failed-sources
-      - name: Restore Dependencies
-        run: dotnet restore ${{ env.CSPROJ_FILE_PATH }}
 
       # Get the commit count and format the version
       - name: Get commit count and format version
@@ -82,8 +79,8 @@ jobs:
       # Publish MAUI Android
       - name: Publish MAUI Android
         run: |
-          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -c:Release -p:AndroidPackageFormat=apk -f:net${{ env.DOTNET_VERSION }}-android -r android-arm64 --sc -p:PublishTrimmed=true -p:AndroidKeyStore=true -p:AndroidSigningKeyStore=${{secrets.ANDROIDSIGNINGKEYSTORE}} -p:AndroidSigningKeyAlias=${{secrets.ANDROIDSIGNINGKEYALIAS}} -p:AndroidSigningKeyPass=${{secrets.ANDROIDSIGNINGKEYPASS}} -p:AndroidSigningStorePass=${{secrets.ANDROIDSIGNINGSTOREPASS}} --no-restore
-          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -c:Release -p:AndroidPackageFormat=apk -f:net${{ env.DOTNET_VERSION }}-android -r android-x64 --sc -p:PublishTrimmed=true -p:AndroidKeyStore=true -p:AndroidSigningKeyStore=${{secrets.ANDROIDSIGNINGKEYSTORE}} -p:AndroidSigningKeyAlias=${{secrets.ANDROIDSIGNINGKEYALIAS}} -p:AndroidSigningKeyPass=${{secrets.ANDROIDSIGNINGKEYPASS}} -p:AndroidSigningStorePass=${{secrets.ANDROIDSIGNINGSTOREPASS}} --no-restore
+          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -c:Release -p:AndroidPackageFormat=apk -f:net${{ env.DOTNET_VERSION }}-android -r android-arm64 --sc -p:PublishTrimmed=true -p:AndroidKeyStore=true -p:AndroidSigningKeyStore=${{secrets.ANDROIDSIGNINGKEYSTORE}} -p:AndroidSigningKeyAlias=${{secrets.ANDROIDSIGNINGKEYALIAS}} -p:AndroidSigningKeyPass=${{secrets.ANDROIDSIGNINGKEYPASS}} -p:AndroidSigningStorePass=${{secrets.ANDROIDSIGNINGSTOREPASS}}
+          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -c:Release -p:AndroidPackageFormat=apk -f:net${{ env.DOTNET_VERSION }}-android -r android-x64 --sc -p:PublishTrimmed=true -p:AndroidKeyStore=true -p:AndroidSigningKeyStore=${{secrets.ANDROIDSIGNINGKEYSTORE}} -p:AndroidSigningKeyAlias=${{secrets.ANDROIDSIGNINGKEYALIAS}} -p:AndroidSigningKeyPass=${{secrets.ANDROIDSIGNINGKEYPASS}} -p:AndroidSigningStorePass=${{secrets.ANDROIDSIGNINGSTOREPASS}}
 
       - name: Rename apk
         run:  |
@@ -176,8 +173,6 @@ jobs:
       - name: Install MAUI Workloads
         run: |
           dotnet workload install maui --ignore-failed-sources
-      - name: Restore Dependencies
-        run: dotnet restore ${{ env.CSPROJ_FILE_PATH }}
 
       # Get the commit count and format the version
       - name: Get commit count and format version
@@ -200,19 +195,11 @@ jobs:
           version: ${{ env.APPLICATION_VERSION }}
           displayVersion: ${{ env.APPLICATION_DISPLAY_VERSION }}
 
-      # Add CFBundleExecutable in Info.plist
-      - name: Update MacCatalyst Plist
-        uses: dppeak/update-ios-plist-action@v1.1.0
-        with:
-          info-plist-path: '${{ env.CSPROJ_PATH }}/Platforms/MacCatalyst/Info.plist'
-          key-value-json: '[{"CFBundleExecutable": "${{ env.APPBUNDLENAME }}"}]'
-          print-file: true
-
       # Publish MAUI MacCatalyst
       - name: Publish MAUI MacCatalyst
         run: |
-          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -f:net${{ env.DOTNET_VERSION }}-maccatalyst -c:Release -p:RuntimeIdentifier=maccatalyst-arm64 --sc -p:PublishTrimmed=true -p:_AppBundleName="${{ env.APPBUNDLENAME }}"
-          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -f:net${{ env.DOTNET_VERSION }}-maccatalyst -c:Release -p:RuntimeIdentifier=maccatalyst-x64 --sc -p:PublishTrimmed=true -p:_AppBundleName="${{ env.APPBUNDLENAME }}"
+          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -f:net${{ env.DOTNET_VERSION }}-maccatalyst -c:Release -p:RuntimeIdentifier=maccatalyst-arm64 --sc -p:PublishTrimmed=true
+          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -f:net${{ env.DOTNET_VERSION }}-maccatalyst -c:Release -p:RuntimeIdentifier=maccatalyst-x64 --sc -p:PublishTrimmed=true
 
       - name: Rename pkg
         run: |
@@ -222,7 +209,7 @@ jobs:
       # Publish MAUI iOS
       - name: Publish MAUI iOS
         run: |
-          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -f:net${{ env.DOTNET_VERSION }}-ios -c:Release -p:ArchiveOnBuild=true -p:RuntimeIdentifier=ios-arm64 -p:EnableCodeSigning=false -p:EnableOnDemandResources=false -p:MtouchUseLlvm=false -p:AotAssemblies=true
+          dotnet publish ${{ env.CSPROJ_FILE_PATH }} -f:net${{ env.DOTNET_VERSION }}-ios -c:Release -p:RuntimeIdentifier=ios-arm64 -p:EnableCodeSigning=false -p:EnableOnDemandResources=false -p:MtouchUseLlvm=false -p:AotAssemblies=true
 
       - name: Rename ipa
         run: |
